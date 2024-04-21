@@ -1,0 +1,82 @@
+[
+    {
+        "name": "Tona fish",
+        "image": "https://cdn.britannica.com/01/127301-050-68D999A2/Albacore.jpg",
+        "id": "001",
+        "price": 19.99,
+        "category": "grosory",
+        "rating": 4.5
+    },
+    {
+        "name": "Dashi Elish",
+        "image": "https://t3.ftcdn.net/jpg/02/62/54/68/360_F_262546815_ylQJcWXo6v7ZdTLXyu0jcHG3OG49tqRh.jpg",
+        "id": "002",
+        "price": 29.99,
+        "category": "grosory",
+        "rating": 3.8
+    },
+    {
+        "name": "Lakka fish piches",
+        "image": "https://post.healthline.com/wp-content/uploads/2021/11/salmon-kale-732x549-thumbnail.jpg",
+        "id": "003",
+        "price": 14.99,
+        "category": "grosory",
+        "rating": 4.2
+    },
+    {
+        "name": "Combo food",
+        "image": "https://images.ctfassets.net/grb5fvwhwnyo/1sJpRsfp1RJI3AASMiOS1h/d5cca0a1c5d78df3052659f2b56a1225/SEO-Food-Fresh-Groceries.png",
+        "id": "004",
+        "price": 9.99,
+        "category": "food",
+        "rating": 4.7
+    },
+    {
+        "name": "Evacod",
+        "image": "https://whatscookingamerica.net/wp-content/uploads/2015/03/AvocadoPhoto18.jpg",
+        "id": "005",
+        "price": 49.99,
+        "category": "food",
+        "rating": 4.0
+    },
+    {
+        "name": "barger",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdb5VvlI7KFkpOOH7dt9ZAKMCd_Iof1p531w&usqp=CAU",
+        "id": "006",
+        "price": 39.99,
+        "category": "food",
+        "rating": 4.9
+    },
+    {
+        "name": "Pizza",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDDb6-HaCwYOtsEBeVcFXJe1sdry77zQeb-Q&usqp=CAU",
+        "id": "007",
+        "price": 79.99,
+        "category": "food",
+        "rating": 4.1
+    },
+    {
+        "name": "Smart tv",
+        "image": "https://rukminim1.flixcart.com/image/850/1000/xif0q/television/h/a/r/-original-imaghgphdj9fsvzt.jpeg?q=90",
+        "id": "008",
+        "price": 204.99,
+        "category": "electronic",
+        "rating": 3.5
+    },
+    {
+        "name": "Camera",
+        "image": "https://futureforward.in/images/thumbs/010/0109217_nikon-z6ii-mirrorless-camera-with-24-120mm-lens-kit_600.jpeg",
+        "id": "009",
+        "price": 16.99,
+        "category": "electronic",
+        "rating": 4.6
+    },
+    {
+        "name": "HeadPhone",
+        "image": "https://m.media-amazon.com/images/I/51JbsHSktkL._AC_UF1000,1000_QL80_.jpg",
+        "id": "010",
+        "price": 89.99,
+        "category": "electronic",
+        "rating": 4.3
+    }
+]
