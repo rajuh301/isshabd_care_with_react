@@ -9,6 +9,7 @@ import {
     AiOutlineDeliveredProcedure,
     AiFillAccountBook,
 } from 'react-icons/ai';
+import Swal from 'sweetalert2';
 
 const ShowOrderProduct = () => {
 
