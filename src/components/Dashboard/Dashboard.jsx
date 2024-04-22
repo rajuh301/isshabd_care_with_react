@@ -2,7 +2,7 @@ import React from 'react';
 import useAdmin from '../../hooks/useAdmin';
 import { Link, NavLink } from 'react-router-dom';
 import Navbar from '../Shair/Navbar';
-import { AiOutlineUser, AiOutlineShopping, AiFillCalculator, AiOutlineDeliveredProcedure } from 'react-icons/ai';
+import { AiOutlineUser, AiOutlineShopping, AiFillCalculator, AiOutlineDeliveredProcedure, AiFillAccountBook } from 'react-icons/ai';
 import Cart from './UserDashboard/Cart';
 
 
@@ -121,6 +121,20 @@ const Dashboard = () => {
                                 </li>
 
 
+                                <li className='mt-5'>
+                                <NavLink
+                                    to="/account"
+                                    className="hover:text-blue-500 cursor-pointer"
+                                    activeClassName="text-blue-500"
+                                >
+
+                                    <div className='flex items-center gap-2'>
+                                        <AiFillAccountBook></AiFillAccountBook> Account
+                                    </div>
+
+
+                                </NavLink>
+                            </li>
 
 
 

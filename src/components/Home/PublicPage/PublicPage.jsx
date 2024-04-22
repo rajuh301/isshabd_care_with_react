@@ -212,7 +212,7 @@ const PublicPage = () => {
 
 
                 <div className="sticky top-0 bg-green-700 h-full rounded-lg mx-1 ">
-                    <div className="sticky top-0 w-52 ">
+                    <div className="sticky top-0 w-40 ">
 
                         <p className='text-center text-white'>Order Summary</p>
                         <hr />

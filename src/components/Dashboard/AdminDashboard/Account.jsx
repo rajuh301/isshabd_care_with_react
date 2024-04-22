@@ -9,10 +9,12 @@ import {
     AiOutlineDeliveredProcedure,
     AiFillAccountBook,
 } from 'react-icons/ai';
+import Swal from "sweetalert2";
 
 const Account = () => {
 
     const [orderss, setOrderss] = useState(null);
+
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -34,15 +36,115 @@ const Account = () => {
 
     const today = new Date().toLocaleDateString(); // Get today's date in MM/DD/YYYY format
     const accepted = orderss?.filter(ord => ord.status === 'done' && ord.date.split(',')[0] === today);
+
+
+    // ------------- Date Functtion ----------
+    const [selectedDate, setSelectedDate] = useState(null);
+    console.log(selectedDate);
+
+    const dateAmount = orderss?.filter(ord => {
+        const formattedDatabaseDate = `${ord.date.split(',')[0].split('/')[2]}-${ord.date.split(',')[0].split('/')[0].padStart(2, '0')}-${ord.date.split(',')[0].split('/')[1].padStart(2, '0')}`;
+        const formattedSelectedDate = selectedDate?.toISOString().split('T')[0];
+
+        return ord.status === 'done' && formattedDatabaseDate === formattedSelectedDate;
+    });
+    // ------------- Date Functtion ----------
+
+
+    // ----------------- Cashout ---------------
+    const handleCashoutSubmit = async (e) => {
+        e.preventDefault();
+    
+        const cashoutAmount = e.target.cashoutAmount.value;
+        const purpose = e.target.purpose.value;  // New input field
+        const currentDate = new Date();
+        const cashoutDate = `${currentDate.getMonth() + 1}/${currentDate.getDate()}/${currentDate.getFullYear()}, ${currentDate.toLocaleTimeString()}`; // Current date in "4/20/2024, 7:44:28 PM" format
+    
+        // Show confirmation alert
+        const confirm = await Swal.fire({
+            icon: 'warning',
+            title: 'Confirm Cashout',
+            text: `Are you sure you want to cashout $${cashoutAmount} for ${purpose}?`,
+            showCancelButton: true,
+            confirmButtonText: 'Cashout',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true
+        });
+    
+        if (confirm.isConfirmed) {
+            try {
+                const response = await fetch('https://isshabd-server.vercel.app/cashout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ amount: cashoutAmount, purpose: purpose, date: cashoutDate }),
+                });
+    
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+    
+                const data = await response.json();
+                console.log('Cashout successful:', data);
+    
+                // Handle success, e.g., show a success message to the user
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Cashout Successful!',
+                    text: `Amount: ${data.amount}\nPurpose: ${data.purpose}\nDate: ${data.date}`,
+                }).then(() => {
+                    // Reload the page
+                    window.location.reload();
+                });
+            } catch (error) {
+                console.error('There was a problem with the cashout:', error.message);
+    
+                // Handle error, e.g., show an error message to the user
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: `Error: ${error.message}`,
+                });
+            }
+        }
+    };
+
+
+
+    // -------------------- Get cashout amount ---------
+    const [cashout, setCashout] = useState([0]);
+    useEffect(() => {
+        const fetchOrders = async () => {
+            try {
+                const res = await fetch('https://isshabd-server.vercel.app/getcashout');
+                const data = await res.json();
+                setCashout(data);
+            } catch (error) {
+                console.error('Error fetching orders:', error);
+            }
+        };
+
+        fetchOrders();
+    }, []);
+
+
+    // -------------------- Get cashout amount ---------
+    const lastbalance = cashout ? cashout.reduce((acc, item) => acc + Number(item.amount), 0) : 0;
+
+    console.log(lastbalance);
+
+
     const acceptedAll = orderss?.filter(ord => ord.status === 'done');
 
 
-    // ------------- Date Functtion ----------
-    const [selectedDate, setSelectedDate] = useState(new Date());
-    console.log(selectedDate)
 
-    const dateAmount = orderss?.filter(ord => ord.status === 'done' && ord.date.split(',')[0] === selectedDate);
-    // ------------- Date Functtion ----------
+const totalAccepted = acceptedAll?.reduce((acc, order) => {
+    return acc + order.selectedProducts?.reduce((acc, pro) => acc + (Number(pro?.price) || 0), 0);
+}, 0) - lastbalance;
+
+
+    // ----------------- Cashout ---------------
     return (
 
 
@@ -170,27 +272,27 @@ const Account = () => {
                         </div>
 
                         <div className="border p-2 flex">
-                            <p className="font-bold">Total Amount: {
-                                acceptedAll?.reduce((acc, order) => {
-                                    return acc + order.selectedProducts?.reduce((acc, pro) => acc + (Number(pro?.price) || 0), 0);
-                                }, 0)
-                            }</p>
+                        <p className="font-bold">Total Amount: {totalAccepted >= 0 ? totalAccepted.toFixed(2) : '0'}</p>
+
                         </div>
 
                         {/* -------------- date ------------ */}
-                        <div className="border ">
-                            Select Date <br />
+                        <div className="border px-5 ">
+                            <p>Select Date </p>
+
+
                             <input
                                 type="date"
-                                value={selectedDate.toISOString().split('T')[0]}
+                                value={selectedDate?.toISOString().split('T')[0]}
                                 onChange={(e) => setSelectedDate(new Date(e.target.value))}
                             />
+
                             {/* -------------------- */}
-                            <div className="border p-2 flex">
-                                <p className="font-bold">Total Amount: {
+                            <div className="p-2 flex">
+                                <p className="font-bold">Amount: {
                                     dateAmount?.reduce((acc, order) => {
                                         return acc + order.selectedProducts?.reduce((acc, pro) => acc + (Number(pro?.price) || 0), 0);
-                                    }, 0)
+                                    }, 0) || 0
                                 }</p>
                             </div>
                             {/* -------------------- */}
@@ -199,12 +301,39 @@ const Account = () => {
 
 
                         {/* ---------------- Cash out Section --------------- */}
-                        <div className="border p-2">
-                            <p className="font-bold">Cashout Amount</p>
+                        <div className="border p-4">
+                            <p className="font-bold mb-2">Cashout Amount</p>
 
-                            <div>
-                                <input placeholder="Input Amount" type="number" required className="bg-slate-400 rounded p-2 text-white " />
-                            </div>
+                            <form onSubmit={handleCashoutSubmit} className="flex items-center">
+                                <div className="flex-grow mr-4">
+                                    <input
+                                        id="cashoutAmount"
+                                        name="cashoutAmount"
+                                        type="number"
+                                        placeholder="Input Amount"
+                                        required
+                                        className="bg-slate-600 rounded py-2 text-white w-full font-bold"
+                                    />
+                                </div>
+
+                                <div className="flex-grow mr-4">
+                                    <input
+                                        id="purpose"
+                                        name="purpose"
+                                        type="text"
+                                        placeholder="Purpose of Cashout"
+                                        required
+                                        className="bg-slate-600 rounded py-2 text-white w-full font-bold"
+                                    />
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    className="bg-blue-500 hover:bg-blue-600 text-white rounded px-2 py-2"
+                                >
+                                    Cashout
+                                </button>
+                            </form>
 
                         </div>
                         {/* ---------------- Cash out Section --------------- */}
