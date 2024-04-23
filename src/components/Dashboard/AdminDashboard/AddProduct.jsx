@@ -7,6 +7,7 @@ import {
     AiFillCalculator,
     AiOutlineDeliveredProcedure,
     AiFillAccountBook,
+    AiFillTrademarkCircle,
 } from 'react-icons/ai';
 import Swal from 'sweetalert2';
 
@@ -186,6 +187,22 @@ const AddProduct = () => {
 
                                 </NavLink>
                             </li>
+
+                            
+                            <li className='mt-5'>
+                                    <NavLink
+                                        to="/addmarket"
+                                        className="hover:text-blue-500 cursor-pointer"
+                                        activeClassName="text-blue-500"
+                                    >
+
+                                        <div className='flex items-center gap-2'>
+                                            <AiFillTrademarkCircle></AiFillTrademarkCircle> Add market
+                                        </div>
+
+
+                                    </NavLink>
+                                </li>
 
                         {/* Add more sidebar menu items */}
                     </ul>

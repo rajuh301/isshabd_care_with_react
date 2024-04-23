@@ -2,7 +2,7 @@ import React from 'react';
 import useAdmin from '../../hooks/useAdmin';
 import { Link, NavLink } from 'react-router-dom';
 import Navbar from '../Shair/Navbar';
-import { AiOutlineUser, AiOutlineShopping, AiFillCalculator, AiOutlineDeliveredProcedure, AiFillAccountBook } from 'react-icons/ai';
+import { AiOutlineUser, AiOutlineShopping, AiFillCalculator, AiOutlineDeliveredProcedure, AiFillAccountBook, AiFillTrademarkCircle } from 'react-icons/ai';
 import Cart from './UserDashboard/Cart';
 
 
@@ -122,19 +122,34 @@ const Dashboard = () => {
 
 
                                 <li className='mt-5'>
-                                <NavLink
-                                    to="/account"
-                                    className="hover:text-blue-500 cursor-pointer"
-                                    activeClassName="text-blue-500"
-                                >
+                                    <NavLink
+                                        to="/account"
+                                        className="hover:text-blue-500 cursor-pointer"
+                                        activeClassName="text-blue-500"
+                                    >
 
-                                    <div className='flex items-center gap-2'>
-                                        <AiFillAccountBook></AiFillAccountBook> Account
-                                    </div>
+                                        <div className='flex items-center gap-2'>
+                                            <AiFillAccountBook></AiFillAccountBook> Account
+                                        </div>
 
 
-                                </NavLink>
-                            </li>
+                                    </NavLink>
+                                </li>
+
+                                <li className='mt-5'>
+                                    <NavLink
+                                        to="/addmarket"
+                                        className="hover:text-blue-500 cursor-pointer"
+                                        activeClassName="text-blue-500"
+                                    >
+
+                                        <div className='flex items-center gap-2'>
+                                            <AiFillTrademarkCircle></AiFillTrademarkCircle> Add market
+                                        </div>
+
+
+                                    </NavLink>
+                                </li>
 
 
 

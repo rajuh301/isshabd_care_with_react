@@ -8,8 +8,11 @@ import {
     AiFillCalculator,
     AiOutlineDeliveredProcedure,
     AiFillAccountBook,
+    AiFillTrademarkCircle,
 } from 'react-icons/ai';
 import Swal from "sweetalert2";
+import ShowStatement from "./ShowStatement";
+import ShowMarketStatment from "./ShowMarketStatment";
 
 const Account = () => {
 
@@ -28,6 +31,10 @@ const Account = () => {
         };
 
         fetchOrders();
+        const intervalId = setInterval(fetchOrders, 5000);
+
+        // Cleanup
+        return () => clearInterval(intervalId);
     }, []);
 
 
@@ -54,12 +61,12 @@ const Account = () => {
     // ----------------- Cashout ---------------
     const handleCashoutSubmit = async (e) => {
         e.preventDefault();
-    
+
         const cashoutAmount = e.target.cashoutAmount.value;
         const purpose = e.target.purpose.value;  // New input field
         const currentDate = new Date();
         const cashoutDate = `${currentDate.getMonth() + 1}/${currentDate.getDate()}/${currentDate.getFullYear()}, ${currentDate.toLocaleTimeString()}`; // Current date in "4/20/2024, 7:44:28 PM" format
-    
+
         // Show confirmation alert
         const confirm = await Swal.fire({
             icon: 'warning',
@@ -70,7 +77,7 @@ const Account = () => {
             cancelButtonText: 'Cancel',
             reverseButtons: true
         });
-    
+
         if (confirm.isConfirmed) {
             try {
                 const response = await fetch('https://isshabd-server.vercel.app/cashout', {
@@ -80,14 +87,14 @@ const Account = () => {
                     },
                     body: JSON.stringify({ amount: cashoutAmount, purpose: purpose, date: cashoutDate }),
                 });
-    
+
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-    
+
                 const data = await response.json();
                 console.log('Cashout successful:', data);
-    
+
                 // Handle success, e.g., show a success message to the user
                 Swal.fire({
                     icon: 'success',
@@ -99,7 +106,7 @@ const Account = () => {
                 });
             } catch (error) {
                 console.error('There was a problem with the cashout:', error.message);
-    
+
                 // Handle error, e.g., show an error message to the user
                 Swal.fire({
                     icon: 'error',
@@ -115,7 +122,7 @@ const Account = () => {
     // -------------------- Get cashout amount ---------
     const [cashout, setCashout] = useState([0]);
     useEffect(() => {
-        const fetchOrders = async () => {
+        const fetchCashout = async () => {
             try {
                 const res = await fetch('https://isshabd-server.vercel.app/getcashout');
                 const data = await res.json();
@@ -125,26 +132,53 @@ const Account = () => {
             }
         };
 
-        fetchOrders();
+        fetchCashout();
+        const intervalId = setInterval(fetchCashout, 5000);
+
+        // Cleanup
+        return () => clearInterval(intervalId);
     }, []);
 
 
     // -------------------- Get cashout amount ---------
     const lastbalance = cashout ? cashout.reduce((acc, item) => acc + Number(item.amount), 0) : 0;
 
-    console.log(lastbalance);
 
 
     const acceptedAll = orderss?.filter(ord => ord.status === 'done');
 
 
 
-const totalAccepted = acceptedAll?.reduce((acc, order) => {
-    return acc + order.selectedProducts?.reduce((acc, pro) => acc + (Number(pro?.price) || 0), 0);
-}, 0) - lastbalance;
+    const totalAccepted = acceptedAll?.reduce((acc, order) => {
+        return acc + order.selectedProducts?.reduce((acc, pro) => acc + (Number(pro?.price) || 0), 0);
+    }, 0) - lastbalance;
 
 
     // ----------------- Cashout ---------------
+
+
+    // -------------------- Get Market  ---------
+    const [market, setMarket] = useState([0]);
+    useEffect(() => {
+        const fetchMarket = async () => {
+            try {
+                const res = await fetch('https://isshabd-server.vercel.app/market');
+                const data = await res.json();
+                setMarket(data);
+            } catch (error) {
+                console.error('Error fetching orders:', error);
+            }
+        };
+
+        fetchMarket();
+        const intervalId = setInterval(fetchMarket, 5000);
+
+        // Cleanup
+        return () => clearInterval(intervalId);
+    }, []);
+
+
+    // -------------------- Get Market  ---------
     return (
 
 
@@ -250,6 +284,20 @@ const totalAccepted = acceptedAll?.reduce((acc, order) => {
                                 </NavLink>
                             </li>
 
+                            <li className='mt-5'>
+                                <NavLink
+                                    to="/addmarket"
+                                    className="hover:text-blue-500 cursor-pointer"
+                                    activeClassName="text-blue-500"
+                                >
+
+                                    <div className='flex items-center gap-2'>
+                                        <AiFillTrademarkCircle></AiFillTrademarkCircle> Add market
+                                    </div>
+
+
+                                </NavLink>
+                            </li>
 
 
                             {/* Add more sidebar menu items */}
@@ -272,7 +320,7 @@ const totalAccepted = acceptedAll?.reduce((acc, order) => {
                         </div>
 
                         <div className="border p-2 flex">
-                        <p className="font-bold">Total Amount: {totalAccepted >= 0 ? totalAccepted.toFixed(2) : '0'}</p>
+                            <p className="font-bold">Total Amount: {totalAccepted >= 0 ? totalAccepted.toFixed(2) : '0'}</p>
 
                         </div>
 
@@ -338,9 +386,109 @@ const totalAccepted = acceptedAll?.reduce((acc, order) => {
                         </div>
                         {/* ---------------- Cash out Section --------------- */}
 
+                    </div >
+                    <hr className="border-b-2 border-black text-2xl mt-5" />
+
+                    {/* ------------------- Statement------------------ */}
+                    <div className="flex mx-auto gap-10">
+
+                        <button onClick={() => document.getElementById('my_modal_3').showModal()} className="btn btn-secondary mt-10">Cashout Statement</button>
+                        <button onClick={() => document.getElementById('my_modal_4').showModal()} className="btn btn-success mt-10">Market Statement</button>
                     </div>
 
+
+                    {/* ---------------------- Modal ----------------- */}
+                    {/* You can open the modal using document.getElementById('ID').showModal() method */}
+                    <dialog id="my_modal_3" className="modal">
+
+                        <div className="modal-box w-11/12 max-w-5xl">
+                            <h3 className="font-bold text-lg">Histery</h3>
+
+
+                            {/* -------------- Content -------------- */}
+                            <div className="overflow-x-auto">
+                                <table className="table">
+                                    {/* head */}
+                                    <thead>
+                                        <tr>
+
+                                            <th>Date</th>
+                                            <th>Amount</th>
+                                            <th>Purpose</th> {/* Corrected the typo "Perpose" to "Purpose" */}
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {cashout ? cashout.slice(0).reverse().map(cas => <ShowStatement key={cas._id} cas={cas} />) : ''}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {/* -------------- Content -------------- */}
+
+
+
+
+
+                            <div className="modal-action">
+                                <form method="dialog">
+                                    <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+
+                                    <button className="btn">Close</button>
+                                </form>
+                            </div>
+                        </div>
+                    </dialog>
+                    {/* ---------------------- Modal ----------------- */}
+                    {/* ---------------------- Modal2 ----------------- */}
+                    {/* You can open the modal using document.getElementById('ID').showModal() method */}
+                    <dialog id="my_modal_4" className="modal">
+
+                        <div className="modal-box w-11/12 max-w-5xl">
+                            <h3 className="font-bold text-lg">Histery</h3>
+
+
+                            {/* -------------- Content -------------- */}
+                            <div className="overflow-x-auto">
+                                <table className="table">
+                                    {/* head */}
+                                    <thead>
+                                        <tr className="flex">
+
+                                            <th>Date</th>
+
+                                            <th className="mx-60">Amount</th>
+                                            <th>Markating</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {market ? market.slice(0).reverse().map(markets => <ShowMarketStatment key={markets._id} markets={markets} />) : ''}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {/* -------------- Content -------------- */}
+
+
+
+
+
+                            <div className="modal-action">
+                                <form method="dialog">
+                                    <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+
+                                    <button className="btn">Close</button>
+                                </form>
+                            </div>
+                        </div>
+                    </dialog>
+                    {/* ---------------------- Modal2 ----------------- */}
+                    {/* ------------------- Statement------------------ */}
                 </div>
+
+
+
 
             </div>
         </div>

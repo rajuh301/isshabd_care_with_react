@@ -13,6 +13,7 @@ import ShowOrderProduct from "../Dashboard/AdminDashboard/ShowOrderProduct";
 import Search from "../../search/Search";
 import ManageProducts from "../Dashboard/AdminDashboard/ManageProducts";
 import Account from "../Dashboard/AdminDashboard/Account";
+import AddMarket from "../Dashboard/AdminDashboard/AddMarket";
 
 export const router = createBrowserRouter([
   {
@@ -81,11 +82,21 @@ export const router = createBrowserRouter([
       </AdminRoute>
     ),
   },
+
   {
     path: "/account",
     element: (
       <AdminRoute>
         <Account/>
+      </AdminRoute>
+    ),
+  },
+
+  {
+    path: "/addmarket",
+    element: (
+      <AdminRoute>
+        <AddMarket/>
       </AdminRoute>
     ),
   },
